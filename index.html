@@ -1,0 +1,286 @@
+<!-- written by: YANZZ PROJECT --><!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <title>SKIBIDEEZ DICTIONARY</title> 
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: bold;
+      padding: 30px 10px 10px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      padding: 30px;
+      gap: 40px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .word-list, .definition-area {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .word-list {
+      width: 300px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .word-item {
+      padding: 14px;
+      margin: 8px 0;
+      border-radius: 8px;
+      font-size: 18px;
+      background-color: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .word-item:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .definition-area {
+      flex: 1;
+    }
+
+    .definition {
+      font-size: 22px;
+      margin-top: 15px;
+      background-color: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 8px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .form-section {
+      padding: 30px;
+      background-color: rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      animation: fadeIn 1s ease-in;
+    }
+
+    input, textarea, button {
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 18px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    input, textarea {
+      width: 100%;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+      transform: scale(1.05);
+    }
+
+    .admin-controls {
+      margin-top: 10px;
+    }
+
+    .delete-button {
+      background-color: crimson;
+      padding: 8px 14px;
+      font-size: 16px;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .delete-button:hover {
+      background-color: darkred;
+    }
+
+    .credit {
+      margin-top: 30px;
+      font-style: italic;
+      color: #ddd;
+      font-size: 18px;
+    }
+
+    #adminLogin {
+      display: none;
+      animation: slideDown 0.5s ease;
+    }
+
+    @keyframes slideDown {
+      from { max-height: 0; opacity: 0; }
+      to { max-height: 200px; opacity: 1; }
+    }
+  </style> 
+ </head> 
+ <body> 
+  <div class="title">
+   SKIBIDEEZ DICTIONARY
+  </div> 
+  <div class="container"> 
+   <div class="word-list"> 
+    <h2>Slang Words</h2> 
+    <input id="searchInput" placeholder="Search dictionary..." oninput="handleSearch()" style="width: 100%; padding: 10px; font-size: 18px; margin-bottom: 10px;"> 
+    <div id="loginTrigger" style="display: none; margin-bottom: 10px;"> <button onclick="revealLogin()">Login as Owner</button> 
+    </div> 
+    <div id="wordList"></div> 
+   </div> 
+   <div class="definition-area"> 
+    <h1>Definition</h1> 
+    <div id="definition" class="definition">
+      Click a word to see its definition. 
+    </div> 
+    <div class="admin-controls" id="adminPanel" style="display: none;"> 
+     <h3>Owner Admin Panel</h3> 
+     <input id="newWord" placeholder="Word"> <textarea id="newDefinition" placeholder="Definition"></textarea> <button onclick="addWord(true)">Add Word (Owner)</button> 
+    </div> 
+    <p class="credit">YANZZ PROJECT</p> 
+   </div> 
+  </div> 
+  <div class="form-section"> 
+   <h3>Suggest a Word</h3> 
+   <input id="userWord" placeholder="Your slang word"> <textarea id="userDefinition" placeholder="What does it mean?"></textarea> <button onclick="addWord(false)">Submit</button> 
+   <br>
+   <br> 
+   <div id="adminLogin"> 
+    <input id="adminPassword" placeholder="Enter owner password"> <button onclick="toggleAdmin()">Submit Password</button> 
+   </div> 
+  </div> 
+  <script>
+  const dictionary = {
+    "Sybau": "Shut your bitch ass up; said to silence someone in a joking or aggressive tone.",
+    "Type shi": "You feel me? Used to emphasize vibes or shared feelings.",
+    "Fine shyt": "Extremely attractive person or thing.",
+    "Aight bet": "Okay, deal; agreement or confirmation.",
+    "Nigga": "Informal term for a close friend; heavily context-dependent and sensitive.",
+    "No cap": "No lie; being totally honest.",
+    "Rizz": "Charisma; game in attracting someone.",
+    "Yeet": "Throw something with force or excitement."
+  };
+
+  const ownerPassword = "camille070511";
+
+  const wordList = document.getElementById("wordList");
+  const definition = document.getElementById("definition");
+  const adminPanel = document.getElementById("adminPanel");
+
+  function renderList(filteredWords = null) {
+    wordList.innerHTML = "";
+    const words = filteredWords || Object.keys(dictionary).sort();
+    words.forEach(word => {
+      const div = document.createElement("div");
+      div.className = "word-item";
+      div.textContent = word;
+      div.onclick = () => {
+        definition.innerHTML = `<strong>${word}:</strong> ${dictionary[word]}`;
+        if (adminPanel.style.display === "block") {
+          const delBtn = document.createElement("span");
+          delBtn.textContent = "Delete";
+          delBtn.className = "delete-button";
+          delBtn.onclick = () => {
+            delete dictionary[word];
+            renderList();
+            definition.innerHTML = "Deleted.";
+          };
+          definition.appendChild(document.createElement("br"));
+          definition.appendChild(delBtn);
+        }
+      };
+      wordList.appendChild(div);
+    });
+  }
+
+  function addWord(isOwner) {
+    const word = isOwner ? document.getElementById("newWord").value.trim() : document.getElementById("userWord").value.trim();
+    const def = isOwner ? document.getElementById("newDefinition").value.trim() : document.getElementById("userDefinition").value.trim();
+
+    if (!word || !def) {
+      alert("Please enter both a word and definition.");
+      return;
+    }
+
+    dictionary[word.toLowerCase()] = def;
+    renderList();
+
+    if (!isOwner) {
+      alert("Thank you for your submission!");
+    }
+
+    if (isOwner) {
+      document.getElementById("newWord").value = "";
+      document.getElementById("newDefinition").value = "";
+    } else {
+      document.getElementById("userWord").value = "";
+      document.getElementById("userDefinition").value = "";
+    }
+  }
+
+  function revealLogin() {
+    document.getElementById("adminLogin").style.display = "block";
+    document.getElementById("loginTrigger").style.display = "none";
+  }
+
+  function toggleAdmin() {
+    const inputPass = document.getElementById("adminPassword").value;
+    if (inputPass === ownerPassword) {
+      adminPanel.style.display = "block";
+      alert("Admin access granted.");
+    } else {
+      alert("Incorrect password.");
+    }
+  }
+
+  function handleSearch() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    
+    if (input === "owner") {
+      document.getElementById("loginTrigger").style.display = "block";
+    } else {
+      document.getElementById("loginTrigger").style.display = "none";
+    }
+
+    const filtered = Object.keys(dictionary).filter(word => word.includes(input));
+    renderList(filtered);
+  }
+
+  renderList();
+</script> 
+ 
+</body></html>
